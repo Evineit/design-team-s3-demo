@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  app:
+    build: ./app
+    ports:
+      - "8000:8000"
+    environment:
+      - S3_BUCKET=${S3_BUCKET:-design-file-manager-local}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - APP_PASSWORD=${APP_PASSWORD:-secret123}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - ./app:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
