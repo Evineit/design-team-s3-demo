@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Files</h1>
+<ul>
+{% for file in files %}
+    <li>{{ file.key }}</li>
+{% endfor %}
+</ul>
+<a href="/upload">Upload</a>
+{% endblock %}
