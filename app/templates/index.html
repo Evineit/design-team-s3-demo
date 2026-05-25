@@ -1,10 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Files</h1>
-<ul>
-{% for file in files %}
-    <li>{{ file.key }}</li>
-{% endfor %}
-</ul>
-<a href="/upload">Upload</a>
+<div class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold mb-3">Upload File</h2>
+    <form hx-post="/upload" hx-target="body" hx-indicator="#spinner"
+          enctype="multipart/form-data" class="flex flex-wrap items-end gap-3">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <select name="file_type" class="border border-gray-300 rounded px-3 py-2 text-sm">
+                <option value="designs">Design</option>
+                <option value="backups">Backup</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">File</label>
+            <input type="file" name="file" required
+                   class="block text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+        </div>
+        <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition">
+            Upload
+        </button>
+    </form>
+    <div id="spinner" class="htmx-indicator mt-2 text-sm text-gray-500">Uploading...</div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {% for file in files %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 flex flex-col">
+        <div class="text-sm font-medium text-gray-800 truncate" title="{{ file.key }}">
+            {{ file.key.split('/', 1)[1] if '/' in file.key else file.key }}
+        </div>
+        <div class="text-xs text-gray-400 mt-1">
+            {{ (file.size / 1024)|round(1) }} KB &middot;
+            {{ file.last_modified.strftime('%Y-%m-%d %H:%M') }}
+        </div>
+        <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
+            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                {{ file.key.split('/')[0] }}
+            </span>
+            <div class="flex gap-2">
+                <a href="/download/{{ file.key }}"
+                   class="text-blue-600 hover:text-blue-800 text-sm">Download</a>
+                <form hx-post="/delete/{{ file.key }}" hx-target="body"
+                      onsubmit="return confirm('Delete this file?')">
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-span-full text-center py-12 text-gray-400">
+        No files uploaded yet. Upload your first file above.
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
