@@ -43,19 +43,19 @@ app.add_middleware(AuthMiddleware)
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request, error: str = ""):
-    return templates.TemplateResponse("login.html", {"request": request, "error": error})
+    return templates.TemplateResponse(request, "login.html", {"error": error})
 
 
 @app.post("/login")
 async def login_post(request: Request, password: str = Form(...)):
     if password != _app_password():
         return templates.TemplateResponse(
-            "login.html", {"request": request, "error": "Incorrect password"}, status_code=200
+            request, "login.html", {"error": "Incorrect password"}, status_code=200
         )
     token = create_session_token(password, _app_password())
     from .s3_client import list_files
     files = list_files(_s3_bucket())
-    resp = templates.TemplateResponse("index.html", {"request": request, "files": files})
+    resp = templates.TemplateResponse(request, "index.html", {"files": files})
     resp.set_cookie(key=SESSION_COOKIE, value=token, max_age=86400, httponly=True)
     return resp
 
@@ -72,7 +72,7 @@ async def index(request: Request):
     from .s3_client import list_files
 
     files = list_files(_s3_bucket())
-    return templates.TemplateResponse("index.html", {"request": request, "files": files})
+    return templates.TemplateResponse(request, "index.html", {"files": files})
 
 
 @app.post("/upload")
@@ -85,7 +85,7 @@ async def upload(request: Request, file: UploadFile = File(...), file_type: str 
     key = f"{file_type}/{file.filename}"
     upload_file(buf, key, _s3_bucket())
     files = list_files(_s3_bucket())
-    return templates.TemplateResponse("index.html", {"request": request, "files": files})
+    return templates.TemplateResponse(request, "index.html", {"files": files})
 
 
 @app.get("/download/{key:path}")
