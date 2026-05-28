@@ -1,6 +1,33 @@
 # Design Team File Manager
 
+[![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Terraform](https://img.shields.io/badge/Terraform-1.5+-844FBA?logo=terraform)](https://www.terraform.io/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Tests](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
+
 A FastAPI web application integrated with AWS S3 for a design team to upload, browse, download, and delete images and backup files. Infrastructure provisioned with Terraform and deployed on ECS Fargate.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    User["👤 User (Browser)"] --> ALB["🔀 ALB (port 80)"]
+    ALB --> Fargate["⚙️ ECS Fargate\nFastAPI + uvicorn"]
+    Fargate --> S3["🗄️ AWS S3 Bucket\n(design files)"]
+    subgraph "🐳 Local Dev"
+        Fargate --> LS["🗄️ LocalStack\n(S3 mock)"]
+    end
+    ECR["📦 ECR\n(Docker registry)"] -.-> Fargate
+```
+
+| Environment | Storage | Command |
+|-------------|---------|---------|
+| **Local dev** | LocalStack (Docker) | `docker compose up` |
+| **Production** | AWS S3 (real) | `terraform apply` |
 
 ## Stack
 
@@ -11,6 +38,14 @@ A FastAPI web application integrated with AWS S3 for a design team to upload, br
 - **Infrastructure:** Terraform → VPC, ALB, ECS Fargate, S3, ECR
 - **Testing:** pytest + moto (mocked S3) + httpx
 
+## Screenshots
+
+| Login Page | File List | Upload |
+|-----------|-----------|--------|
+| *(add screenshot)* | *(add screenshot)* | *(add screenshot)* |
+
+To capture screenshots, run `docker compose up`, open `http://localhost:8000`, and capture the pages.
+
 ## Project Structure
 
 ```
@@ -19,43 +54,36 @@ project1/
 │   ├── main.py       # FastAPI routes + auth middleware
 │   ├── auth.py       # Password gate session tokens
 │   ├── s3_client.py  # S3 CRUD operations
-│   ├── templates/    # Jinja2 templates
+│   ├── templates/    # Jinja2 templates (Tailwind + HTMX)
 │   ├── static/       # CSS
 │   ├── Dockerfile
 │   └── requirements.txt
-├── infra/            # Terraform configuration
-│   ├── main.tf       # Provider setup
-│   ├── variables.tf  # Input variables
-│   ├── outputs.tf    # ALB URL, bucket name, ECR URL
-│   ├── vpc.tf        # Networking
-│   ├── s3.tf         # S3 bucket + IAM policies
-│   ├── ecr.tf        # ECR repository
-│   └── ecs.tf        # ECS Fargate + ALB
-├── tests/            # 22 tests (all passing)
-│   ├── test_auth.py
-│   ├── test_s3_client.py
-│   └── test_routes.py
+├── infra/            # Terraform configuration (7 files)
+│   ├── main.tf, vpc.tf, s3.tf, ecr.tf, ecs.tf
+│   ├── variables.tf, outputs.tf
+├── tests/            # 24 tests (all passing)
+│   ├── test_auth.py, test_s3_client.py, test_routes.py
+│   └── conftest.py   # Shared fixtures (moto, etc.)
+├── scripts/          # Demo data seeder
+│   ├── seed.py
+│   └── demo-files/   # Sample SVGs + backup file
+├── screenshots/      # Portfolio screenshots
 ├── Makefile
-└── docker-compose.yml
+└── docker-compose.yml  # LocalStack + app
 ```
 
 ## Quick Start (Local Dev)
 
 ```bash
-# Copy environment config
-cp .env.example .env
-# Edit .env with your AWS credentials and password
-
-# Start the app with Docker Compose
+# Start LocalStack + App (one command)
 docker compose up
 
-# Or run locally
-cd app
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
+# Seed demo files (separate terminal)
+cd app && python ../scripts/seed.py
 
-Open http://localhost:8000 and sign in with the password from `.env`.
+# Open http://localhost:8000
+# Password: secret123 (or change in docker-compose.yml)
+```
 
 ## Running Tests
 
@@ -65,7 +93,7 @@ pip install -r requirements.txt
 pytest ../tests -v
 ```
 
-Tests use moto to mock AWS S3 — no real AWS credentials needed.
+Tests use moto to mock AWS S3 — no real AWS credentials needed. 24 tests currently pass.
 
 ## Deployment
 
