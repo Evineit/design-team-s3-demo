@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <rect width="400" height="200" fill="#1a1a2e"/>
+  <text x="200" y="100" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#e94560">
+    DESIGN CO.
+  </text>
+  <text x="200" y="135" text-anchor="middle" font-family="Arial" font-size="14" fill="#ccc">
+    Brand Logo — Full Color
+  </text>
+</svg>

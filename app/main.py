@@ -1,5 +1,6 @@
 import os
 import mimetypes
+from contextlib import asynccontextmanager
 from pathlib import PurePosixPath
 
 from fastapi import FastAPI, Request, Form, UploadFile, File, HTTPException
@@ -10,7 +11,17 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from .auth import create_session_token, verify_session_token
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app):
+    if os.environ.get("AWS_ENDPOINT_URL"):
+        from .s3_client import create_bucket
+        create_bucket(_s3_bucket())
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
 
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")

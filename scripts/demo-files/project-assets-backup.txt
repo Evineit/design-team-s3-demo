@@ -1,0 +1,8 @@
+Backup — Project Assets — 2026-05-28
+======================================
+- /designs/logos/ (12 files)
+- /designs/mockups/ (8 files)
+- /designs/banners/ (5 files)
+- /assets/icons/ (24 files)
+- /assets/fonts/ (3 files)
+Total size: ~340 MB

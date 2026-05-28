@@ -1,6 +1,16 @@
 import io
 import pytest
-from app.s3_client import list_files, upload_file, download_file, delete_file
+from app.s3_client import create_bucket, list_files, upload_file, download_file, delete_file
+
+
+class TestCreateBucket:
+    def test_creates_new_bucket(self, s3_mock):
+        create_bucket("fresh-test-bucket")
+        buckets = s3_mock.list_buckets()["Buckets"]
+        assert any(b["Name"] == "fresh-test-bucket" for b in buckets)
+
+    def test_idempotent_when_bucket_exists(self, s3_bucket, bucket_name):
+        create_bucket(bucket_name)
 
 
 class TestListFiles:

@@ -1,14 +1,30 @@
 services:
+  localstack:
+    image: localstack/localstack:4.2
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   app:
     build: ./app
+    depends_on:
+      localstack:
+        condition: service_healthy
     ports:
       - "8000:8000"
     environment:
       - S3_BUCKET=${S3_BUCKET:-design-file-manager-local}
       - AWS_REGION=${AWS_REGION:-us-east-1}
       - APP_PASSWORD=${APP_PASSWORD:-secret123}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=fake
+      - AWS_SECRET_ACCESS_KEY=fake
     volumes:
       - ./app:/src/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

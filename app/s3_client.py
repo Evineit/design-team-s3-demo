@@ -1,9 +1,22 @@
 import io
+import os
 import boto3
 
 
 def _client():
-    return boto3.client("s3")
+    endpoint_url = os.environ.get("AWS_ENDPOINT_URL")
+    kwargs = {}
+    if endpoint_url:
+        kwargs["endpoint_url"] = endpoint_url
+    return boto3.client("s3", **kwargs)
+
+
+def create_bucket(bucket_name):
+    client = _client()
+    try:
+        client.create_bucket(Bucket=bucket_name)
+    except client.exceptions.BucketAlreadyOwnedByYou:
+        pass
 
 
 def list_files(bucket_name):

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#g)"/>
+  <text x="400" y="110" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial" font-size="48" font-weight="bold" fill="white">
+    SUMMER SALE — 40% OFF
+  </text>
+  <text x="400" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="rgba(255,255,255,0.8)">
+    Limited time offer · Ends August 31
+  </text>
+</svg>
