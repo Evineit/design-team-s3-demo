@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Terraform](https://img.shields.io/badge/Terraform-1.5+-844FBA?logo=terraform)](https://www.terraform.io/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Tests](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)
+[![Tests](https://github.com/Evineit/design-team-s3-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/Evineit/design-team-s3-demo/actions/workflows/ci.yml)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)](https://www.docker.com/)
 
 A FastAPI web application integrated with AWS S3 for a design team to upload, browse, download, and delete images and backup files. Infrastructure provisioned with Terraform and deployed on ECS Fargate.
@@ -42,9 +42,7 @@ flowchart LR
 
 | Login Page | File List | Upload |
 |-----------|-----------|--------|
-| *(add screenshot)* | *(add screenshot)* | *(add screenshot)* |
-
-To capture screenshots, run `docker compose up`, open `http://localhost:8000`, and capture the pages.
+| ![Login](screenshots/login.png) | ![Files](screenshots/files.png) | ![Upload](screenshots/upload.png) |
 
 ## Project Structure
 
